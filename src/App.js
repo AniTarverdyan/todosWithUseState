@@ -1,23 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import "./App.css";
 
 function App() {
+  const [todoList, setTodoList] = useState([]);
+  const [inputValue, setInputValue] = useState("");
+  const [filterValue, setFilterValue] = useState("");
+
+  fetch("https://jsonplaceholder.typicode.com/todos")
+    .then((res) => res.json())
+    .then((tl) => {
+      setTodoList(tl);
+    });
+
+  const onInputValueChange = (event) => {
+    setInputValue(event.target.value);
+  };
+
+  const filterTodoList = () => {
+    setFilterValue(inputValue);
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <input onChange={onInputValueChange} type="text" />
+      <button onClick={filterTodoList}>filter</button>
+      {todoList
+        .filter((todo) => {
+          return todo.title.includes(filterValue);
+        })
+        .map((todo) => {
+          return <div>{todo.title}</div>;
+        })}
     </div>
   );
 }
